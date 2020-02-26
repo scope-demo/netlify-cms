@@ -72,7 +72,7 @@ class FrontmatterFormatter {
     const result = matter(content, { engines: parsers, ...format });
     return {
       ...result.data,
-      ...(result.content.trim() && { body: result.content }),
+      body: result.content,
     };
   }
 
@@ -83,8 +83,13 @@ class FrontmatterFormatter {
     const format = this.format || getFormatOpts('yaml');
     if (this.customDelimiter) this.format.delimiters = this.customDelimiter;
 
+    // gray-matter always adds a line break at the end which trips our
+    // change detection logic
+    // https://github.com/jonschlinkert/gray-matter/issues/96
+    const trimLastLineBreak = body.slice(-1) !== '\n' ? true : false;
     // `sortedKeys` is not recognized by gray-matter, so it gets passed through to the parser
-    return matter.stringify(body, meta, { engines: parsers, sortedKeys, ...format });
+    const file = matter.stringify(body, meta, { engines: parsers, sortedKeys, ...format });
+    return trimLastLineBreak && file.slice(-1) === '\n' ? file.substring(0, file.length - 1) : file;
   }
 }
 

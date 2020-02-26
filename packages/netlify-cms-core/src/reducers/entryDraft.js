@@ -31,6 +31,13 @@ const initialState = Map({
   key: '',
 });
 
+const isChanged = (entry, value) => {
+  if (entry && !entry.get('data').equals(value)) {
+    return true;
+  }
+  return false;
+};
+
 const entryDraftReducer = (state = Map(), action) => {
   switch (action.type) {
     case DRAFT_CREATE_FROM_ENTRY:
@@ -89,18 +96,19 @@ const entryDraftReducer = (state = Map(), action) => {
       return state.set('localBackup', newState);
     }
     case DRAFT_CHANGE_FIELD: {
-      const publishedEntry = action.payload.publishedEntry || Map();
-      const unpublishedEntry = action.payload.unpublishedEntry || Map();
-      let newState = state.withMutations(state => {
-        state.setIn(['entry', 'data', action.payload.field], action.payload.value);
+      const publishedEntry = action.payload.publishedEntry;
+      const unpublishedEntry = action.payload.unpublishedEntry;
+      const { value } = action.payload;
+      const newState = state.withMutations(state => {
         state.mergeDeepIn(['fieldsMetaData'], fromJS(action.payload.metadata));
-        state.set('hasChanged', true);
+        state.setIn(['entry', 'data', action.payload.field], value);
+        const newData = state.getIn(['entry', 'data']);
+        if (isChanged(publishedEntry, newData) || isChanged(unpublishedEntry, newData)) {
+          state.set('hasChanged', true);
+        } else {
+          state.set('hasChanged', false);
+        }
       });
-      const newStateData = newState.getIn(['entry', 'data']);
-
-      (newStateData.equals(unpublishedEntry.get('data')) ||
-        newStateData.equals(publishedEntry.get('data'))) &&
-        (newState = newState.set('hasChanged', false));
 
       return newState;
     }
