@@ -152,5 +152,17 @@ describe('config', () => {
         );
       }).not.toThrowError();
     });
+
+    it('should throw if collections sortableFields is not a boolean or a string array', () => {
+      expect(() => {
+        validateConfig(merge({}, validConfig, { collections: [{ sortableFields: 'title' }] }));
+      }).toThrowError("'collections[0].sortableFields' should be array");
+    });
+
+    it('should allow sortableFields to be a string array', () => {
+      expect(() => {
+        validateConfig(merge({}, validConfig, { collections: [{ sortableFields: ['title'] }] }));
+      }).not.toThrow();
+    });
   });
 });
