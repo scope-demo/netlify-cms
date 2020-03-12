@@ -115,37 +115,31 @@ function unpublishedEntriesFailed(error: Error) {
   };
 }
 
-function unpublishedEntryPersisting(
-  collection: Collection,
-  entry: EntryMap,
-  transactionID: string,
-) {
+function unpublishedEntryPersisting(collection: Collection, slug: string) {
   return {
     type: UNPUBLISHED_ENTRY_PERSIST_REQUEST,
     payload: {
       collection: collection.get('name'),
-      entry,
+      slug,
     },
-    optimist: { type: BEGIN, id: transactionID },
   };
 }
 
-function unpublishedEntryPersisted(collection: Collection, transactionID: string, slug: string) {
+function unpublishedEntryPersisted(collection: Collection, entry: EntryMap, slug: string) {
   return {
     type: UNPUBLISHED_ENTRY_PERSIST_SUCCESS,
     payload: {
       collection: collection.get('name'),
+      entry,
       slug,
     },
-    optimist: { type: COMMIT, id: transactionID },
   };
 }
 
-function unpublishedEntryPersistedFail(error: Error, transactionID: string) {
+function unpublishedEntryPersistedFail(error: Error) {
   return {
     type: UNPUBLISHED_ENTRY_PERSIST_FAILURE,
     payload: { error },
-    optimist: { type: REVERT, id: transactionID },
     error,
   };
 }
@@ -372,7 +366,6 @@ export function persistUnpublishedEntry(collection: Collection, existingUnpublis
     }
 
     const backend = currentBackend(state.config);
-    const transactionID = uuid();
     const entry = entryDraft.get('entry');
     const assetProxies = await getMediaAssets({
       getState,
@@ -385,12 +378,13 @@ export function persistUnpublishedEntry(collection: Collection, existingUnpublis
      * Serialize the values of any fields with registered serializers, and
      * update the entry and entryDraft with the serialized values.
      */
-    const fields = selectFields(collection, entry.get('slug'));
+    const slug = entry.get('slug');
+    const fields = selectFields(collection, slug);
     const serializedData = serializeValues(entry.get('data'), fields);
     const serializedEntry = entry.set('data', serializedData);
     const serializedEntryDraft = entryDraft.set('entry', serializedEntry);
 
-    dispatch(unpublishedEntryPersisting(collection, serializedEntry, transactionID));
+    dispatch(unpublishedEntryPersisting(collection, slug));
     const persistAction = existingUnpublishedEntry
       ? backend.persistUnpublishedEntry
       : backend.persistEntry;
@@ -412,7 +406,7 @@ export function persistUnpublishedEntry(collection: Collection, existingUnpublis
           dismissAfter: 4000,
         }),
       );
-      dispatch(unpublishedEntryPersisted(collection, transactionID, newSlug));
+      dispatch(unpublishedEntryPersisted(collection, serializedEntry, newSlug));
     } catch (error) {
       dispatch(
         notifSend({
@@ -424,7 +418,7 @@ export function persistUnpublishedEntry(collection: Collection, existingUnpublis
           dismissAfter: 8000,
         }),
       );
-      return Promise.reject(dispatch(unpublishedEntryPersistedFail(error, transactionID)));
+      dispatch(unpublishedEntryPersistedFail(error));
     }
   };
 }
@@ -553,10 +547,9 @@ export function unpublishPublishedEntry(collection: Collection, slug: string) {
   return (dispatch: ThunkDispatch<State, {}, AnyAction>, getState: () => State) => {
     const state = getState();
     const backend = currentBackend(state.config);
-    const transactionID = uuid();
     const entry = selectEntry(state, collection.get('name'), slug);
     const entryDraft = (Map().set('entry', entry) as unknown) as EntryDraft;
-    dispatch(unpublishedEntryPersisting(collection, entry, transactionID));
+    dispatch(unpublishedEntryPersisting(collection, slug));
     return backend
       .deleteEntry(state, collection, slug)
       .then(() =>
@@ -569,8 +562,8 @@ export function unpublishPublishedEntry(collection: Collection, slug: string) {
           status: status.get('PENDING_PUBLISH'),
         }),
       )
-      .then(() => {
-        dispatch(unpublishedEntryPersisted(collection, transactionID, slug));
+      .then(newSlug => {
+        dispatch(unpublishedEntryPersisted(collection, entry, newSlug));
         dispatch(entryDeleted(collection, slug));
         dispatch(loadUnpublishedEntry(collection, slug));
         dispatch(
@@ -589,7 +582,7 @@ export function unpublishPublishedEntry(collection: Collection, slug: string) {
             dismissAfter: 8000,
           }),
         );
-        dispatch(unpublishedEntryPersistedFail(error, transactionID));
+        dispatch(unpublishedEntryPersistedFail(error));
       });
   };
 }

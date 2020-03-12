@@ -200,7 +200,7 @@ export class Editor extends React.Component {
 
     const { entry, newEntry, fields, collection } = this.props;
 
-    if (entry && !entry.get('isFetching') && !entry.get('error')) {
+    if (entry && !entry.get('isFetching') && !entry.get('isPersisting') && !entry.get('error')) {
       /**
        * Deserialize entry values for widgets with registered serializers before
        * creating the entry draft.

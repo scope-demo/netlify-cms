@@ -9,6 +9,7 @@ import {
   UNPUBLISHED_ENTRIES_SUCCESS,
   UNPUBLISHED_ENTRY_PERSIST_REQUEST,
   UNPUBLISHED_ENTRY_PERSIST_SUCCESS,
+  UNPUBLISHED_ENTRY_PERSIST_FAILURE,
   UNPUBLISHED_ENTRY_STATUS_CHANGE_REQUEST,
   UNPUBLISHED_ENTRY_STATUS_CHANGE_SUCCESS,
   UNPUBLISHED_ENTRY_STATUS_CHANGE_FAILURE,
@@ -66,33 +67,34 @@ const unpublishedEntries = (state = Map(), action: EditorialWorkflowAction) => {
       });
 
     case UNPUBLISHED_ENTRY_PERSIST_REQUEST: {
-      // Update Optimistically
-      return state.withMutations(map => {
-        map.setIn(
-          ['entities', `${action.payload!.collection}.${action.payload!.entry.get('slug')}`],
-          fromJS(action.payload!.entry),
-        );
-        map.setIn(
-          [
-            'entities',
-            `${action.payload!.collection}.${action.payload!.entry.get('slug')}`,
-            'isPersisting',
-          ],
-          true,
-        );
-        map.updateIn(['pages', 'ids'], List(), list =>
-          list.push(action.payload!.entry.get('slug')),
-        );
-      });
+      return state.setIn(
+        ['entities', `${action.payload!.collection}.${action.payload!.slug}`, 'isPersisting'],
+        true,
+      );
     }
 
-    case UNPUBLISHED_ENTRY_PERSIST_SUCCESS:
-      // Update Optimistically
+    case UNPUBLISHED_ENTRY_PERSIST_FAILURE: {
       return state.deleteIn([
         'entities',
         `${action.payload!.collection}.${action.payload!.slug}`,
         'isPersisting',
       ]);
+    }
+
+    case UNPUBLISHED_ENTRY_PERSIST_SUCCESS: {
+      return state.withMutations(map => {
+        map.setIn(
+          ['entities', `${action.payload!.collection}.${action.payload!.slug}`],
+          fromJS(action.payload!.entry),
+        );
+        map.deleteIn([
+          'entities',
+          `${action.payload!.collection}.${action.payload!.slug}`,
+          'isPersisting',
+        ]);
+        map.updateIn(['pages', 'ids'], List(), list => list.push(action.payload!.slug));
+      });
+    }
 
     case UNPUBLISHED_ENTRY_STATUS_CHANGE_REQUEST:
       // Update Optimistically
