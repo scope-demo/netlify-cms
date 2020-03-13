@@ -12,6 +12,7 @@
 // the project's config changing)
 require('dotenv').config();
 const { addMatchImageSnapshotPlugin } = require('cypress-image-snapshot/plugin');
+const { initCypressPlugin } = require('@undefinedlabs/scope-agent/cypress/plugin');
 
 const {
   setupGitHub,
@@ -181,4 +182,8 @@ module.exports = async (on, config) => {
   });
 
   addMatchImageSnapshotPlugin(on, config);
+
+  const newConfig = initCypressPlugin(on, config);
+
+  return newConfig;
 };

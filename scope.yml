@@ -1,0 +1,4 @@
+instrumentation:
+  enabled: true
+  http:
+    payload: true

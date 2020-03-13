@@ -15,6 +15,7 @@
 import 'cypress-plugin-tab';
 import 'cypress-file-upload';
 import 'cypress-jest-adapter';
+import '@undefinedlabs/scope-agent/cypress/support';
 import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
 
 addMatchImageSnapshotCommand({
