@@ -1,3 +1,5 @@
+[![Scope](https://app.scope.dev/api/badge/548edaaf-f047-4da3-9f46-1d6d13917381/default)](https://app.scope.dev/external/v1/explore/b774c8da-2494-4ede-8d2f-b0321ff3cd7c/548edaaf-f047-4da3-9f46-1d6d13917381/default?branch=master)
+
 # Netlify CMS
 
 A CMS for static site generators. Give users a simple way to edit
