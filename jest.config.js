@@ -9,7 +9,9 @@ module.exports = {
     'netlify-cms-ui-default': '<rootDir>/packages/netlify-cms-ui-default/src/index.js',
     'netlify-cms-backend-github': '<rootDir>/packages/netlify-cms-backend-github/src/index.ts',
   },
+  coverage: true,
+  forceCoverageMatch: ['**/*.test.js'],
   testURL: 'http://localhost:8080',
   testRunner: '@undefinedlabs/scope-agent/jest/testRunner',
-  runner: '@undefinedlabs/scope-agent/jest/runner',
+  globalSetup: '@undefinedlabs/scope-agent/jest/globalSetup',
 };
