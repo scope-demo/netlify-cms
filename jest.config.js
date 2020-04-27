@@ -10,7 +10,7 @@ module.exports = {
     'netlify-cms-backend-github': '<rootDir>/packages/netlify-cms-backend-github/src/index.ts',
   },
   coverage: true,
-  forceCoverageMatch: ['**/*.test.js'],
+  forceCoverageMatch: ['**/*.test.js', '**/*.spec.js'],
   testURL: 'http://localhost:8080',
   testRunner: '@undefinedlabs/scope-agent/jest/testRunner',
   globalSetup: '@undefinedlabs/scope-agent/jest/globalSetup',
