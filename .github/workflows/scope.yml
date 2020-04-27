@@ -6,6 +6,9 @@ jobs:
   tests:
     env:
       SCOPE_DSN: ${{ secrets.SCOPE_DSN }}
+      SCOPE_CODE_PATH_ENABLED: true
+      SCOPE_INSTRUMENTATION_HTTP_PAYLOADS: true
+      SCOPE_INSTRUMENTATION_DB_STATEMENT_VALUES: true
       CI: true
     runs-on: ubuntu-latest
 
