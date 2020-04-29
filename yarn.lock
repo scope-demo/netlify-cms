@@ -3427,12 +3427,13 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
-"@undefinedlabs/scope-agent@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@undefinedlabs/scope-agent/-/scope-agent-0.5.2.tgz#71b35c6ad9477e0d135441d82789a499a6d185ec"
-  integrity sha512-gqWBjFxzQl6ndt+vp9sQ2KK5pZRPQbt+RrNmQogXDpE++fYh04LyIFB1NxbHAxjWx2b3efCq/Wyadgs+ymvWYg==
+"@undefinedlabs/scope-agent@^0.6.0-beta.4":
+  version "0.6.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@undefinedlabs/scope-agent/-/scope-agent-0.6.0-beta.4.tgz#d5d95353fee4a551f8a05dd442fc55b8c0f3eda8"
+  integrity sha512-4Ixyl6+YE2BE7LGONRF43TjEjvdO0L1kXLmTyWHbGaloGvsPfk7ha+nPDV5tVF4h31eWortnBLxfqLzqnag9SA==
   dependencies:
     "@hapi/sntp" "^3.1.2"
+    agentkeepalive "^4.1.0"
     axios "^0.19.0"
     continuation-local-storage "^3.2.1"
     istanbul-lib-coverage "^3.0.0"
@@ -3714,6 +3715,15 @@ agentkeepalive@^3.4.1:
   resolved "https://registry.yarnpkg.com/agentkeepalive/-/agentkeepalive-3.5.2.tgz#a113924dd3fa24a0bc3b78108c450c2abee00f67"
   integrity sha512-e0L/HNe6qkQ7H19kTlRRqUibEAwDK5AFk6y3PtMsuut2VAH6+Q4xZml1tNDJD7kSAyqmbG/K08K5WEJYtUrSlQ==
   dependencies:
+    humanize-ms "^1.2.1"
+
+agentkeepalive@^4.1.0:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/agentkeepalive/-/agentkeepalive-4.1.2.tgz#d7bc3bafd7ea88032f6be22b6f1389b3d42c9c91"
+  integrity sha512-waNHE7tQBBn+2qXucI8HY0o2Y0OBPWldWOWsZwY71JcCm4SvrPnWdceFfB5NIXSqE8Ewq6VR/Qt5b1i69P6KCQ==
+  dependencies:
+    debug "^4.1.0"
+    depd "^1.1.2"
     humanize-ms "^1.2.1"
 
 aggregate-error@^3.0.0:
@@ -6688,7 +6698,7 @@ denodeify@^1.2.1:
   resolved "https://registry.yarnpkg.com/denodeify/-/denodeify-1.2.1.tgz#3a36287f5034e699e7577901052c2e6c94251631"
   integrity sha1-OjYof1A05pnnV3kBBSwubJQlFjE=
 
-depd@~1.1.2:
+depd@^1.1.2, depd@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.2.tgz#9bcd52e14c097763e749b274c4346ed2e560b5a9"
   integrity sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=
